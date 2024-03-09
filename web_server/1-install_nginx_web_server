@@ -1,22 +1,45 @@
 #!/usr/bin/env bash
-# a Bash script that configures a new Ubuntu machine to respect
-# above requirements (this script will be run on the server itself)
-# bash script to install nginx web server
-#   - Nginx should be listening on port 80
-#   - Return page containing "Holberton School" when queried
-
+# installs nginx and configure it to listen on port 80
+# Update package lists
 apt-get update
+
+# Install nginx
 apt-get install -y nginx
 
-mkdir /etc/nginx/html
-touch /etc/nginx/html/index.html
-echo "Holberton School" > /etc/nginx/html/index.html
-printf %s "server {
-     listen      80 default_server;
-     listen      [::]:80 default_server;
-     root        /etc/nginx/html;
-     index       index.html index.htm;
-}
-" > /etc/nginx/sites-available/default
+# Set nginx to listen on port 80
+sed -i 's/^.*listen 80;/    listen 80;/g' /etc/nginx/sites-available/default
 
-service nginx restart
+# Restart nginx
+/etc/init.d/nginx reload
+
+# Create a temporary HTML file with the required content
+echo "<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Welcome to nginx!</title>
+</head>
+<body>
+    <h1>Holberton School</h1>
+</body>
+</html>" > /var/www/html/index.html
+
+# Verify nginx configuration
+nginx -t
+
+# Restart nginx if the configuration is valid
+if [ $? -eq 0 ]; then
+    /etc/init.d/nginx reload
+else
+    echo "Nginx configuration is invalid. Please check the configuration file."
+fi
+
+# Verify if nginx serves the correct content
+curl -s http://localhost/ | grep -q "Holberton School"
+if [ $? -eq 0 ]; then
+    echo "Nginx serves the correct content."
+else
+    echo "Error: Nginx does not serve the correct content."
+fi
