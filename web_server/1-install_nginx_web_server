@@ -1,7 +1,25 @@
 #!/usr/bin/env bash
-# How to install nginx on a remote server and configure it
-sudo apt update 
+# Install nginx on a remote server and configure it
+
+# Update package lists
+sudo apt update
+
+# Install nginx
 sudo apt install nginx -y
-sudo touch /var/www/html/index.html
-echo "Holberton School" | sudo tee /var/www/html/index.html 
-sudo service nginx restart
+
+# Create index.html file
+sudo tee /var/www/html/index.html >/dev/null <<EOF
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Nginx</title>
+</head>
+<body>
+    <h1>Holberton School</h1>
+    <p>Welcome to nginx!</p>
+</body>
+</html>
+EOF
+
+# Restart nginx service
+sudo systemctl restart nginx
