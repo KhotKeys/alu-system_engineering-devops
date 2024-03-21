@@ -1,3 +1,4 @@
-#!/usr/bin/env bash
-#start apache2 inside docker
-service apache2 start
+#1/usr/bin/env bash
+#Nginx likes port 80
+rm /etc/nginx/sites-enabled/default
+In-s/etc/nginx/sites-available/default /etc/nginx/sites-enabled/default sudo service nginx restart
