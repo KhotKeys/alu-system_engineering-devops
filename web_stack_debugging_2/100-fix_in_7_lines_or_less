@@ -4,13 +4,3 @@ pkill apache2
 sed -i 's/80/8080/g' /etc/nginx/sites-available/default
 chmod 644 /etc/nginx/nginx.conf
 sudo -u nginx service nginx restart
-sleep 2 # Waiting for nginx to restart
-if ! pgrep -x "nginx" > /dev/null; then
-    echo "Nginx is not running"
-    exit 1
-fi
-if ! ss -tuln | grep -q ':8080 '; then
-    echo "Nginx is not listening on port 8080"
-    exit 1
-fi
-echo "Nginx is running as nginx user and listening on port 8080"
